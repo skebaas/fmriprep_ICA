@@ -1,25 +1,7 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 # emacs: -*- mode: python; py-indent-offset: 4; indent-tabs-mode: nil -*-
 # vi: set ft=python sts=4 ts=4 sw=4 et:
-#
-# Copyright 2022 The NiPreps Developers <nipreps@gmail.com>
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-#
-# We support and encourage derived works from this project, please read
-# about our expectations at
-#
-#     https://www.nipreps.org/community/licensing/
-#
 """
 Multi-echo EPI
 ~~~~~~~~~~~~~~
@@ -56,10 +38,11 @@ class T2SMapInputSpec(CommandLineInputSpec):
                              mandatory=True,
                              minlen=3,
                              desc='echo times')
-    mask_file = File(argstr='--mask %s',
-                     position=3,
-                     desc='mask file',
-                     exists=True)
+    mask_file = File( exists=True,
+                           argstr='--mask %s',
+                           position=3,
+                           mandatory=False,
+                           desc='Mask file from skullstripping')
     fittype = traits.Enum('curvefit', 'loglin',
                           argstr='--fittype %s',
                           position=4,
@@ -94,9 +77,8 @@ class T2SMap(CommandLine):
     >>> t2smap.cmdline  # doctest: +ELLIPSIS
     't2smap -d sub-01_run-01_echo-1_bold.nii.gz sub-01_run-01_echo-2_bold.nii.gz \
 sub-01_run-01_echo-3_bold.nii.gz -e 13.0 27.0 43.0 --fittype curvefit'
-
     """
-    _cmd = 't2smap'
+    _cmd = 'tedana'
     input_spec = T2SMapInputSpec
     output_spec = T2SMapOutputSpec
 
@@ -108,7 +90,7 @@ sub-01_run-01_echo-3_bold.nii.gz -e 13.0 27.0 43.0 --fittype curvefit'
     def _list_outputs(self):
         outputs = self._outputs().get()
         out_dir = os.getcwd()
-        outputs['t2star_map'] = os.path.join(out_dir, 'T2starmap.nii.gz')
-        outputs['s0_map'] = os.path.join(out_dir, 'S0map.nii.gz')
-        outputs['optimal_comb'] = os.path.join(out_dir, 'desc-optcom_bold.nii.gz')
+        outputs['t2star_map'] = os.path.join(out_dir, 't2sv.nii.gz')
+        outputs['s0_map'] = os.path.join(out_dir, 's0v.nii.gz')
+        outputs['optimal_comb'] = os.path.join(out_dir, 'dn_ts_OC.nii.gz')
         return outputs
